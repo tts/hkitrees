@@ -16,25 +16,23 @@ ui <- bootstrapPage(
                 draggable = TRUE,
                 selectInput(inputId = "target",
                             label = "Kohde",
-                            choices = c("All", targets),
-                            selected = "All")
+                            choices = targets,
+                            selected = "KARHUPUISTO")
   )
 )
 
 server <- function(input, output, session) {
   
   filteredTargets <- reactive({
-    if(input$target == 'All') {
-      return(Arvokohteet)
-    } else {
-      Arvokohteet %>%
-        filter(kohteen_nimi == input$target)
-    }
+    Arvokohteet %>%
+      filter(kohteen_nimi == input$target)
   })
 
   
   output$map <- renderLeaflet({
     
+    mapviewOptions(basemaps = c("OpenStreetMap"))
+  
     trees_joined_with_selected_area <- st_join(filteredTargets(), Puut)
     trees_here <- Puut[Puut$id %in% trees_joined_with_selected_area$id.y, ]
     
