@@ -23,7 +23,7 @@ ui <- bootstrapPage(
 
 server <- function(input, output, session) {
   
-  filteredTargets <- reactive({
+  Kohteet <- reactive({
     Arvokohteet %>%
       filter(kohteen_nimi == input$target)
   })
@@ -33,25 +33,28 @@ server <- function(input, output, session) {
     
     mapviewOptions(basemaps = c("OpenStreetMap"))
   
-    trees_joined_with_selected_area <- st_join(filteredTargets(), Puut)
-    trees_here <- Puut[Puut$id %in% trees_joined_with_selected_area$id.y, ]
+    trees_joined_with_selected_area <- st_join(Kohteet(), Puut)
+    Kohteen_puut <- Puut[Puut$id %in% trees_joined_with_selected_area$id.y, ]
     
-    area <- mapview(filteredTargets(),
+    area <- mapview(Kohteet(),
                  col.regions = "lightskyblue4",
-                 popup = leafpop::popupTable(filteredTargets(),
+                 popup = leafpop::popupTable(Kohteet(),
                                              zcol = c("kohteen_nimi",
                                                       "yleiskuvaus",
                                                       "kasvilajistollinen_arvo",
                                                       "kasvillisuus"),
                                              feature.id = FALSE))
    
-    if(nrow(trees_here) > 0) {
-      m <- area + mapview(trees_here, 
+    if(nrow(Kohteen_puut) > 0) {
+      m <- area + mapview(Kohteen_puut, 
                           col.regions = "green",
                           cex = 5,
                           feature.id = FALSE)
+      
     } else {
       m <- area
+      
+      
     }
    
     m@map
