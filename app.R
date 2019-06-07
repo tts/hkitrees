@@ -17,7 +17,8 @@ ui <- bootstrapPage(
                 selectInput(inputId = "target",
                             label = "Kohde",
                             choices = targets,
-                            selected = "KARHUPUISTO")
+                            selected = "KATRI VALAN PUISTO"),
+                HTML("<div><br/><a target='blank' href='http://tuijasonkkila.fi/blog/2018/01/streets-of-helsinki/'>[About TBA]</a></div>")
   )
 )
 
@@ -31,34 +32,32 @@ server <- function(input, output, session) {
   
   output$map <- renderLeaflet({
     
-    mapviewOptions(basemaps = c("OpenStreetMap"))
-  
     trees_joined_with_selected_area <- st_join(Kohteet(), Puut)
     Kohteen_puut <- Puut[Puut$id %in% trees_joined_with_selected_area$id.y, ]
+
+    mapviewOptions(basemaps = c("OpenStreetMap"))
     
     area <- mapview(Kohteet(),
-                 col.regions = "lightskyblue4",
-                 popup = leafpop::popupTable(Kohteet(),
-                                             zcol = c("kohteen_nimi",
-                                                      "yleiskuvaus",
-                                                      "kasvilajistollinen_arvo",
-                                                      "kasvillisuus"),
-                                             feature.id = FALSE))
-   
+                    col.regions = "steelblue2",
+                    zcol = "kohteen_nimi",
+                    legend = FALSE)
+ 
     if(nrow(Kohteen_puut) > 0) {
-      m <- area + mapview(Kohteen_puut, 
-                          col.regions = "green",
-                          cex = 5,
-                          feature.id = FALSE)
       
+      m <- area +
+        mapview(Kohteen_puut,
+                col.regions = "springgreen4",
+                cex = Kohteen_puut$koko,
+                zcol = "suomenknimi",
+                legend = FALSE)
+      
+  
     } else {
       m <- area
-      
-      
     }
-   
-    m@map
     
+    m@map
+  
   })
   
 }
