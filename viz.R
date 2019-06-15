@@ -90,3 +90,11 @@ ggsave(
   width = 30,
   height = 25
 )
+
+# Most near and most far from home
+home <- st_sfc(st_point(c([your_lat_here],[your_lon_here])), crs = 4326)
+home2 <- st_transform(home, crs = 4326)
+most_near <- t2[which.min(st_distance(home2, t2[1:nrow(t2),])),]
+most_far <- t2[which.max(st_distance(home2, t2[1:nrow(t2),])),]
+near_far <- rbind(most_near, most_far)
+mapview::mapview(near_far)
