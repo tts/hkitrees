@@ -96,5 +96,14 @@ home <- st_sfc(st_point(c([your_lat_here],[your_lon_here])), crs = 4326)
 home2 <- st_transform(home, crs = 4326)
 most_near <- t2[which.min(st_distance(home2, t2[1:nrow(t2),])),]
 most_far <- t2[which.max(st_distance(home2, t2[1:nrow(t2),])),]
+st_distance(home2, most_near, by_element = T)
+st_distance(home2, most_far, by_element = T)
+# 11239 m 
 near_far <- rbind(most_near, most_far)
 mapview::mapview(near_far)
+
+# Thuja family
+thujas <- t2 %>% filter(suku == 'Thuja')
+most_near_thuja <- thujas[which.min(st_distance(home2, thujas[1:nrow(thujas),])),]
+
+
