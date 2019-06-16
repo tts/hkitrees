@@ -47,7 +47,7 @@ p <- ggplot() +
                  aes(x = X, y = Y, fill = ..density..), 
                  geom = 'tile', contour = F, alpha = .5) +  
   scale_fill_viridis_c() +
-  labs(title = 'The density of trees is biggest in Taka-Töölö',
+  labs(title = 'Tree density in Helsinki',
        fill = str_c('Nr or', '\ntrees')) +
   theme(axis.text = element_blank(),
         axis.title = element_blank(),
@@ -91,6 +91,31 @@ ggsave(
   height = 25
 )
 
+# Size
+p <- ggplot() +
+  stat_density2d(data = t2_with_lat_lon, 
+                 aes(x = X, y = Y,
+                     fill = stat(nlevel)), 
+                 geom = 'polygon') +
+  labs(title = 'The size of trees in Helsinki',
+       subtitle = 'Size = diameter at chest height',
+       fill = 'Density') +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank()) +
+  facet_wrap(. ~ kokoluokka, ncol = 3) +
+  scale_fill_viridis_c() 
+
+p
+
+ggsave(
+  "koko.png",
+  units = "cm",
+  width = 30,
+  height = 25
+)
+
+
 # Most near and most far from home
 home <- st_sfc(st_point(c([your_lat_here],[your_lon_here])), crs = 4326)
 home2 <- st_transform(home, crs = 4326)
@@ -98,7 +123,7 @@ most_near <- t2[which.min(st_distance(home2, t2[1:nrow(t2),])),]
 most_far <- t2[which.max(st_distance(home2, t2[1:nrow(t2),])),]
 st_distance(home2, most_near, by_element = T)
 st_distance(home2, most_far, by_element = T)
-# 11239 m 
+
 near_far <- rbind(most_near, most_far)
 mapview::mapview(near_far)
 
